@@ -61,15 +61,22 @@ class GoodsLogic
         }
         unset($param['p']);
         $where = ' WHERE 1=1 ';
-        $changeResult = $this->goodsModel->getWhereAndParamForPage($param);
+        $changeResult = $this->goodsModel->getWhereAndParamForPage($param,true);
         if($changeResult['status']==2)
         {
             return $changeResult;
         }
         $where.= $changeResult['result']['where'];
         $data = $changeResult['result']['param'];
-        $where.=" ORDER BY id desc";
-        $rs = $this->goodsModel->page($p, 0, '', $where,$data , $field = '*');
+        $where.=" ORDER BY goods.id desc";
+        $sql= "select gc.goodscate_name,b.brand_name,bs.brandser_name,goods.goods_name,goods.goods_name_css, "
+            ." goods.goods_market_price,goods.goods_shop_price,goods.goods_promote_price,goods.goods_weight,goods.goods_number,goods.goods_warn_number, "
+            ." goods.goods_key,goods.goods_brief,goods.goods_is_real,goods.goods_is_gift,goods.goods_is_best,goods.goods_is_new,goods.goods_is_hot,goods.goods_is_promote,"
+            ." goods.goods_sort,goods.is_del,goods.id"
+            ." from goods LEFT JOIN goods_category as gc ON goods.category_id=gc.id "
+            ." LEFT JOIN brand as b ON goods.brand_id=b.id "
+            ." LEFT JOIN brand_series as bs ON goods.brand_series_id=bs.id ".$where;
+        $rs = $this->goodsModel->page($p, 0, $sql, '',$data , $field = '*');
         return $rs;
     }
 

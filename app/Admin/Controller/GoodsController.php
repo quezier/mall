@@ -16,7 +16,11 @@ class GoodsController extends BaseController
     }
 
     function toGoodsList(){
-        $needFieldsResult = $this->goodsLogic->getNeedFields(array('id'));
+
+        $needFieldsResult = $this->goodsLogic->getNeedFields(array('goods_name','goods_market_price',
+            'goods_shop_price','goods_promote_price','goods_weight','goods_number','goods_warn_number',
+            'goods_is_real','goods_is_gift','goods_is_best','goods_is_new','goods_is_hot','goods_is_promote',
+            'goods_sort','is_del'));
 
         if($needFieldsResult['status']==1)
         {
@@ -34,7 +38,7 @@ class GoodsController extends BaseController
             '编辑'=>HTTP_DOMAIN.'/admin_toeditgoods/id/{{v.id}}/last_url/'.trim(PATH,'/')
         );
         $searchInputs = array(
-            'eq_id'=>array('type'=>'text','name'=>'序号')
+            'like_goods_goods_name'=>array('type'=>'text','name'=>'商品名称')
         );
         $this->setVariable('tableCName','商品');
         $this->setVariable('titleNames',$titleNames);
@@ -114,7 +118,26 @@ class GoodsController extends BaseController
 
     function pageGoodsList()
     {
+
         $rs = $this->goodsLogic->pageGoodsList($_GET);
+        if($rs['status']==1&&!empty($rs['result']))
+        {
+            $goodsIsReal = PubFunc::ddConfig('goods_is_real');
+            $goodsIsGift = PubFunc::ddConfig('goods_is_gift');
+            $goodsIsBest = PubFunc::ddConfig('goods_is_best');
+            $goodsIsHot = PubFunc::ddConfig('goods_is_hot');
+            $goodsIsPromote = PubFunc::ddConfig('goods_is_promote');
+            $goodsIsNew = PubFunc::ddConfig('goods_is_new');
+            foreach ($rs['result']['list'] as $key => $val)
+            {
+                $rs['result']['list'][$key]['goods_is_real']= $goodsIsReal[$val['goods_is_real']];
+                $rs['result']['list'][$key]['goods_is_gift']= $goodsIsGift[$val['goods_is_gift']];
+                $rs['result']['list'][$key]['goods_is_best']= $goodsIsBest[$val['goods_is_best']];
+                $rs['result']['list'][$key]['goods_is_hot']= $goodsIsHot[$val['goods_is_hot']];
+                $rs['result']['list'][$key]['goods_is_promote']= $goodsIsPromote[$val['goods_is_promote']];
+                $rs['result']['list'][$key]['goods_is_new']= $goodsIsNew[$val['goods_is_new']];
+            }
+        }
         echo json_encode($rs);exit;
     }
 
