@@ -13,14 +13,12 @@ class GoodsLogic
     function getAllGoods($fields = '*')
     {
         $rs = $this->goodsModel->selectAll('','WHERE is_del=1',null,$fields);
-        unset($this->goodsModel);
         return $rs;
     }
     
     function getAll($sql='',$where='WHERE is_del=1',$param=null,$fields = '*')
     {
         $rs = $this->goodsModel->selectAll($sql,$where,$param,$fields);
-        unset($this->goodsModel);
         return $rs;
     }
     /**
@@ -32,7 +30,6 @@ class GoodsLogic
     function sql($sql,$param = null)
     {
         $rs = $this->goodsModel->sql($sql,$param);
-        unset($this->goodsModel);
         return $rs;
     }
     
@@ -148,8 +145,15 @@ class GoodsLogic
         $rs = $this->goodsModel->selectOne($sql,$where,$param,$fields);
         return $rs;
     }
-    function getForEdit()
+    function getForEdit($gid)
     {
-        $this->sql("select * from ",array());
+        $rs = $this->sql("select gc.goodscate_name,b.brand_name,bs.brandser_name,g.goods_name,g.goods_name_css, "
+            ." g.goods_market_price,g.goods_shop_price,g.goods_promote_price,g.goods_weight,g.goods_number,g.goods_warn_number, "
+            ." g.goods_key,g.goods_brief,g.goods_is_real,g.goods_is_gift,g.goods_is_best,g.goods_is_new,g.goods_is_hot,g.goods_is_promote,"
+            ." g.goods_sort,g.is_del,g.id"
+            ." from goods as g LEFT JOIN goods_category as gc ON g.category_id=gc.id "
+            ." LEFT JOIN brand as b ON g.brand_id=b.id "
+            ." LEFT JOIN brand_series as bs ON g.brand_series_id=bs.id WHERE g.is_del=1 AND g.id=:id",array('id'=>$gid));
+        return $rs;
     }
 }

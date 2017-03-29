@@ -60,20 +60,50 @@ class GoodsController extends BaseController
 
     function toEditGoods(){
         $id = !empty($_GET['id'])?intval($_GET['id']):0;
-        $rs = $this->goodsLogic->getById($id);
+        $rs = $this->goodsLogic->getForEdit($id);
         if($rs['status']==1&&!empty($rs['result'])&&count($rs['result'])>0)
         {
-            $this->setVariable('tableObject',$rs['result']);
+            $this->setVariable('tableObject',$rs['result'][0]);
         }
         $isDel = PubFunc::ddConfig('is_del');
-
-        $needFieldsResult = $this->goodsLogic->getNeedFields(array('is_del'));
+        $goodsIsReal = PubFunc::ddConfig('goods_is_real');
+        $goodsIsGift = PubFunc::ddConfig('goods_is_gift');
+        $goodsIsBest = PubFunc::ddConfig('goods_is_best');
+        $goodsIsHot = PubFunc::ddConfig('goods_is_hot');
+        $goodsIsPromote = PubFunc::ddConfig('goods_is_promote');
+        $goodsIsNew = PubFunc::ddConfig('goods_is_new');
+        $needFieldsResult = $this->goodsLogic->getNeedFields(array('goods_name','goods_name_css','goods_market_price',
+            'goods_shop_price','goods_promote_price','goods_weight','goods_number','goods_warn_number','goods_key',
+            'goods_brief','goods_is_real','goods_is_gift','goods_is_best','goods_is_new','goods_is_hot','goods_is_promote',
+            'goods_sort','is_del'));
         if($needFieldsResult['status']==2)
         {
-            return $needFieldsResult;
+            $this->toTip('未获取到字段',HTTP_DOMAIN.'/admin_tolistgoods');exit;
         }
         $needFields = $needFieldsResult['result'];
+        $needFields['goodscate_name'] = '商品类型';
+        $needFields['brand_name'] = '品牌';
+        $needFields['brandser_name'] = '品牌系列';
         $editFields = array(
+            'goodscate_name'=>array('cn_name'=>$needFields['goodscate_name'],'type'=>'text','no_use'=>true),
+            'brand_name'=>array('cn_name'=>$needFields['brand_name'],'type'=>'text','no_use'=>true),
+            'brandser_name'=>array('cn_name'=>$needFields['brandser_name'],'type'=>'text','no_use'=>true),
+            'goods_name'=>array('cn_name'=>$needFields['goods_name'],'type'=>'text'),
+            'goods_name_css'=>array('cn_name'=>$needFields['goods_name_css'],'type'=>'text'),
+            'goods_market_price'=>array('cn_name'=>$needFields['goods_market_price'],'type'=>'text'),
+            'goods_shop_price'=>array('cn_name'=>$needFields['goods_shop_price'],'type'=>'text'),
+            'goods_promote_price'=>array('cn_name'=>$needFields['goods_promote_price'],'type'=>'text'),
+            'goods_weight'=>array('cn_name'=>$needFields['goods_weight'],'type'=>'text'),
+            'goods_number'=>array('cn_name'=>$needFields['goods_number'],'type'=>'text'),
+            'goods_warn_number'=>array('cn_name'=>$needFields['goods_warn_number'],'type'=>'text'),
+            'goods_key'=>array('cn_name'=>$needFields['goods_key'],'type'=>'text'),
+            'goods_brief'=>array('cn_name'=>$needFields['goods_brief'],'type'=>'text'),
+            'goods_is_real'=>array('cn_name'=>$needFields['goods_is_real'],'type'=>'radio','list'=>$goodsIsReal),
+            'goods_is_gift'=>array('cn_name'=>$needFields['goods_is_gift'],'type'=>'radio','list'=>$goodsIsGift),
+            'goods_is_best'=>array('cn_name'=>$needFields['goods_is_best'],'type'=>'radio','list'=>$goodsIsBest),
+            'goods_is_new'=>array('cn_name'=>$needFields['goods_is_new'],'type'=>'radio','list'=>$goodsIsNew),
+            'goods_is_hot'=>array('cn_name'=>$needFields['goods_is_hot'],'type'=>'radio','list'=>$goodsIsHot),
+            'goods_is_promote'=>array('cn_name'=>$needFields['goods_is_promote'],'type'=>'radio','list'=>$goodsIsPromote),
             'is_del'=>array('cn_name'=>$needFields['is_del'],'type'=>'radio','list'=>$isDel),
         );
         $this->setVariable('tableCName','商品');
@@ -126,6 +156,8 @@ class GoodsController extends BaseController
 
     function doEditGoods()
     {
+        $_POST['goods_edit_adminid']=PubFunc::session('admin_id');
+        $_POST['goods_edit_date']=time();
         $rs = $this->goodsLogic->update($_POST);
         echo json_encode($rs);exit;
     }

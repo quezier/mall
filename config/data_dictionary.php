@@ -107,5 +107,29 @@ return array(
     'is_invoice'=>array(
         '1'=>'需要',
         '2'=>'不需要',
+    ),
+    'goods_is_real'=>array(
+        '1'=>'是',
+        '2'=>'否'
+    ),
+    'goods_is_gift'=>array(
+        '1'=>'是',
+        '2'=>'否'
+    ),
+    'goods_is_best'=>array(
+        '1'=>'是',
+        '2'=>'否'
+    ),
+    'goods_is_new'=>array(
+        '1'=>'是',
+        '2'=>'否'
+    ),
+    'goods_is_hot'=>array(
+        '1'=>'是',
+        '2'=>'否'
+    ),
+    'goods_is_promote'=>array(
+        '1'=>'是',
+        '2'=>'否'
     )
 );
