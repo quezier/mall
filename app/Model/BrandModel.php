@@ -5,7 +5,6 @@ use Core\PdoHelper;
 class BrandModel extends BaseModel{
 	public $fields=array(
 		'id'=>'主键',
-		'brand_goodscate_id'=>'商品分类表id',
 		'brand_name'=>'品牌名称',
 		'brand_pinyin'=>'拼音名称',
 		'brand_en'=>'英文名',
@@ -24,7 +23,6 @@ class BrandModel extends BaseModel{
         parent::__construct($inputPdoHelper);
         $this->tableName = 'brand';
         $this->_validateRuleArray = array(
-			'brand_goodscate_id'=>array('rule'=>'/^-{0,0}[0-9]{1,11}$/','tip'=>'商品分类表id的值必须是整数且必须是正数,最大长度11'),
 			'brand_name'=>array('rule'=>'/^(.*){1,1}$/','tip'=>'品牌名称的值必须是字符且,最大长度60'),
 			'brand_pinyin'=>array('rule'=>'/^(.*){1,1}$/','tip'=>'拼音名称的值必须是字符且,最大长度200'),
 			'brand_en'=>array('rule'=>'/^(.*){1,1}$/','tip'=>'英文名的值必须是字符且,最大长度200'),
@@ -40,7 +38,6 @@ class BrandModel extends BaseModel{
 		);
 
         $this->_testData = array(
-			'brand_goodscate_id'=>0,
 			'brand_name'=>'无',
 			'brand_pinyin'=>'无',
 			'brand_en'=>'无',
@@ -57,7 +54,7 @@ class BrandModel extends BaseModel{
 
     }
 	public function insertTest(){
-		$sql = "INSERT INTO brand (id,brand_goodscate_id,brand_name,brand_pinyin,brand_en,brand_logo,brand_desc,brand_url,brand_sort_order,brand_is_show,brand_add_date,brand_admin_id,brand_business_id,is_del) VALUES (NULL,:brand_goodscate_id,:brand_name,:brand_pinyin,:brand_en,:brand_logo,:brand_desc,:brand_url,:brand_sort_order,:brand_is_show,:brand_add_date,:brand_admin_id,:brand_business_id,:is_del)";
+		$sql = "INSERT INTO brand (id,brand_name,brand_pinyin,brand_en,brand_logo,brand_desc,brand_url,brand_sort_order,brand_is_show,brand_add_date,brand_admin_id,brand_business_id,is_del) VALUES (NULL,:brand_name,:brand_pinyin,:brand_en,:brand_logo,:brand_desc,:brand_url,:brand_sort_order,:brand_is_show,:brand_add_date,:brand_admin_id,:brand_business_id,:is_del)";
         //验证插入的数据是否符合数据库定义的字段规则
         $chkDataArray = $this->validateDbField($this->_testData,$this->_validateRuleArray);
         if($chkDataArray['status']==1)
