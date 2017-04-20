@@ -60,7 +60,7 @@ class GoodsCategoryLogic
             $p = $param['p'];
         }
         unset($param['p']);
-        $where = ' WHERE 1=1 ';
+        $where = ' WHERE 1=1 and is_del=1 ';
         $changeResult = $this->goodsCategoryModel->getWhereAndParamForPage($param);
         if($changeResult['status']==2)
         {

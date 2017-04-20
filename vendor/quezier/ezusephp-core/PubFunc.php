@@ -422,4 +422,22 @@ content="0;url='.$url.'"><title>loading ... </title></head><body>
         $_SESSION = array();
         session_destroy();
     }
+
+    /**获取下拉列表数据
+     * @param $data
+     * @param $val
+     * @return array
+     */
+    static function getSelectData($data,$val)
+    {
+        $list = array();
+        if(count($data)>0)
+        {
+            foreach ($data as $atKey => $atVal){
+                $list[$atVal['id']] =  $atVal[$val];
+            }
+        }
+        return $list;
+    }
+
 }

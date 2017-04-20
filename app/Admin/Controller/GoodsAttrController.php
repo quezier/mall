@@ -1,6 +1,7 @@
 <?php
 namespace App\Admin\Controller;
 use App\Logic\GoodsAttrLogic;
+use App\Logic\GoodsCategoryLogic;
 use Core\BaseController;
 use Core\PubFunc;
 class GoodsAttrController extends BaseController
@@ -24,7 +25,7 @@ class GoodsAttrController extends BaseController
         echo json_encode($rs);exit;
     }
     function toGoodsAttrList(){
-        $needFieldsResult = $this->goodsAttrLogic->getNeedFields(array('id'));
+        $needFieldsResult = $this->goodsAttrLogic->getNeedFields(array('id','goodsattr_name','goodsattr_value','goods_category_id','goodsattr_add_date','goodsattr_admin_id','is_del'));
 
         if($needFieldsResult['status']==1)
         {
@@ -55,20 +56,14 @@ class GoodsAttrController extends BaseController
     }
 
     function toAddGoodsAttr(){
-        $needFieldsResult = $this->goodsAttrLogic->getNeedFields(array('id'));
-        if($needFieldsResult['status']==2)
-        {
-            return $needFieldsResult;
-        }
-        $needFields = $needFieldsResult['result'];
-        $addFields = array(
-            'id'=>array('cn_name'=>$needFields['id'],'type'=>'text')
-        );
+        //根据品牌里外键商品分类ID查找商品分类名称
+        $gclogic=new GoodsCategoryLogic();
+        $topCategory = $gclogic->getTop();
+        $this->setVariable('topCategory', $topCategory['result']);
 
         $this->setVariable('tableCName','商品属性');
-        $this->setVariable('addFields',$addFields);
         $this->setVariable('actionUrl',HTTP_DOMAIN."/admin_doaddgoodsatt");
-        $this->displayAdd();
+        $this->display();
     }
 
     function toEditGoodsAttr(){
@@ -78,21 +73,15 @@ class GoodsAttrController extends BaseController
         {
             $this->setVariable('tableObject',$rs['result']);
         }
-        $isDel = PubFunc::ddConfig('is_del');
-
-        $needFieldsResult = $this->goodsAttrLogic->getNeedFields(array('is_del'));
-        if($needFieldsResult['status']==2)
-        {
-            return $needFieldsResult;
-        }
-        $needFields = $needFieldsResult['result'];
-        $editFields = array(
-            'is_del'=>array('cn_name'=>$needFields['is_del'],'type'=>'radio','list'=>$isDel),
-        );
+        //根据品牌里外键商品分类ID查找商品分类名称
+        $gclogic=new GoodsCategoryLogic();
+        $topCategory = $gclogic->getTop();
+        $goodscate = $gclogic->getOne('','where is_del=1 and id=:goods_category_id',array('goods_category_id' => $rs['result']['goods_category_id']));
+        $this->setVariable('topCategory', $topCategory['result']);
+        $this->setVariable('goodscate_name', $goodscate['result']);
         $this->setVariable('tableCName','商品属性');
-        $this->setVariable('editFields',$editFields);
         $this->setVariable('actionUrl',HTTP_DOMAIN."/admin_doeditgoodsatt");
-        $this->displayEdit();
+        $this->display();
     }
 
     function pageGoodsAttrList()
@@ -103,13 +92,21 @@ class GoodsAttrController extends BaseController
 
     function doAddGoodsAttr()
     {
-        $rs = $this->goodsAttrLogic->insertFromTestData($_POST);
-        echo json_encode($rs);exit;
+        $goodsattrLogic = new GoodsAttrLogic();
+        $data = $_POST;
+        $data['goodsattr_admin_id'] = PubFunc::session('admin_id');
+        $data['goods_category_id'] = $_POST['category_id'];
+        $data['goodsattr_add_date'] = time();
+        $result = $goodsattrLogic->insertFromTestData($data);
+        echo json_encode($result);exit;
     }
 
     function doEditGoodsAttr()
     {
-        $rs = $this->goodsAttrLogic->update($_POST);
+        $data = $_POST;
+        $data['goodsattr_edit_date'] = time();
+        $data['goods_category_id'] = $_POST['category_id'];
+        $rs = $this->goodsAttrLogic->update($data);
         echo json_encode($rs);exit;
     }
 }

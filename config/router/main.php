@@ -23,7 +23,8 @@ return array(
     'admin/admin_goods_attr',
     'admin/admin_brand',
     'admin/admin_brand_series',
-    'admin/admin_goods_category'
+    'admin/admin_goods_category',
+    'admin/admin_user',
 );
 
 

@@ -35,5 +35,14 @@ return array(
         'parent_privilege_name'=>'',
         'privilege_type'=>1,//1.左边主菜单 2.按钮 3.下拉列表 4.数据url
         'call'=>''
+    ),
+    'admin_user'=>array(
+        'method'=>'GET',
+        'rank_num'=>1,
+        'privilege_name'=>'用户管理',
+        'privilege_css'=>'mdi-action-perm-identity',
+        'parent_privilege_name'=>'',
+        'privilege_type'=>1,//1.左边主菜单 2.按钮 3.下拉列表 4.数据url
+        'call'=>''
     )
 );

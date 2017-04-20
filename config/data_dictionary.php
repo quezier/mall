@@ -131,5 +131,9 @@ return array(
     'goods_is_promote'=>array(
         '1'=>'是',
         '2'=>'否'
+    ),
+    'useraddr_is_default'=>array(
+        '1'=>'是',
+        '2'=>'否'
     )
 );

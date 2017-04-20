@@ -64,15 +64,17 @@ class BrandSeriesLogic
         }
         unset($param['p']);
         $where = ' WHERE 1=1 ';
-        $changeResult = $this->brandSeriesModel->getWhereAndParamForPage($param);
+        $changeResult = $this->brandSeriesModel->getWhereAndParamForPage($param,true);
         if($changeResult['status']==2)
         {
             return $changeResult;
         }
         $where.= $changeResult['result']['where'];
         $data = $changeResult['result']['param'];
-        $where.=" ORDER BY id desc";
-        $rs = $this->brandSeriesModel->page($p, 0, '', $where,$data , $field = '*');
+        $where.=" ORDER BY brandseries.id desc";
+        $sql="select brand.brand_name as brand_id,brandseries.id,brandseries.brandser_name,brandseries.brandser_pinyin,brandseries.brandser_en,brandseries.brandser_add_date,".
+            "brandseries.is_del from brand_series as brandseries LEFT JOIN brand on brand.id=brandseries.brand_id".$where;
+        $rs = $this->brandSeriesModel->page($p, 0, $sql, '',$data , $field = '*');
         return $rs;
     }
 

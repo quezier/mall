@@ -1,5 +1,6 @@
 <?php
 namespace App\Admin\Controller;
+use App\Logic\BrandLogic;
 use App\Logic\BrandSeriesLogic;
 use Core\BaseController;
 use Core\PubFunc;
@@ -19,7 +20,7 @@ class BrandSeriesController extends BaseController
         echo json_encode($rs);exit;
     }
     function toBrandSeriesList(){
-        $needFieldsResult = $this->brandSeriesLogic->getNeedFields(array('id'));
+        $needFieldsResult = $this->brandSeriesLogic->getNeedFields(array('id','brandser_name','brandser_pinyin','brandser_en','brand_id','brandser_add_date','is_del'));
 
         if($needFieldsResult['status']==1)
         {
@@ -50,14 +51,21 @@ class BrandSeriesController extends BaseController
     }
 
     function toAddBrandSeries(){
-        $needFieldsResult = $this->brandSeriesLogic->getNeedFields(array('id'));
+        $needFieldsResult = $this->brandSeriesLogic->getNeedFields(array('brand_id','brandser_name','brandser_pinyin','brandser_en','brandser_detail'));
         if($needFieldsResult['status']==2)
         {
             return $needFieldsResult;
         }
+        $brandlogic=new BrandLogic();
+        $brandlist=$brandlogic->getAllBrand();
+        $listbrand = PubFunc::getSelectData($brandlist['result'],'brand_name');;
         $needFields = $needFieldsResult['result'];
         $addFields = array(
-            'id'=>array('cn_name'=>$needFields['id'],'type'=>'text')
+            'brand_id'=>array('cn_name'=>$needFields['brand_id'],'type'=>'select','list'=>$listbrand),
+            'brandser_name'=>array('cn_name'=>$needFields['brandser_name'],'type'=>'text'),
+            'brandser_pinyin'=>array('cn_name'=>$needFields['brandser_pinyin'],'type'=>'text'),
+            'brandser_en'=>array('cn_name'=>$needFields['brandser_en'],'type'=>'text'),
+            'brandser_detail'=>array('cn_name'=>$needFields['brandser_detail'],'type'=>'editor','is_one_row'=>1),
         );
 
         $this->setVariable('tableCName','商品品牌系列');
@@ -75,14 +83,21 @@ class BrandSeriesController extends BaseController
         }
         $isDel = PubFunc::ddConfig('is_del');
 
-        $needFieldsResult = $this->brandSeriesLogic->getNeedFields(array('is_del'));
+        $needFieldsResult = $this->brandSeriesLogic->getNeedFields(array('brand_id','brandser_name','brandser_pinyin','brandser_en','brandser_detail'));
         if($needFieldsResult['status']==2)
         {
             return $needFieldsResult;
         }
+        $brandlogic=new BrandLogic();
+        $brandlist=$brandlogic->getAllBrand();
+        $listbrand = PubFunc::getSelectData($brandlist['result'],'brand_name');;
         $needFields = $needFieldsResult['result'];
         $editFields = array(
-            'is_del'=>array('cn_name'=>$needFields['is_del'],'type'=>'radio','list'=>$isDel),
+            'brand_id'=>array('cn_name'=>$needFields['brand_id'],'type'=>'select','list'=>$listbrand),
+            'brandser_name'=>array('cn_name'=>$needFields['brandser_name'],'type'=>'text'),
+            'brandser_pinyin'=>array('cn_name'=>$needFields['brandser_pinyin'],'type'=>'text'),
+            'brandser_en'=>array('cn_name'=>$needFields['brandser_en'],'type'=>'text'),
+            'brandser_detail'=>array('cn_name'=>$needFields['brandser_detail'],'type'=>'editor','is_one_row'=>1),
         );
         $this->setVariable('tableCName','商品品牌系列');
         $this->setVariable('editFields',$editFields);
@@ -98,12 +113,22 @@ class BrandSeriesController extends BaseController
 
     function doAddBrandSeries()
     {
+        if(!empty($_POST['brandser_detail']))
+        {
+            $_POST['brandser_detail'] = htmlentities($_POST['brandser_detail']);
+        }
+        $_POST['brand_add_date']=time();
         $rs = $this->brandSeriesLogic->insertFromTestData($_POST);
         echo json_encode($rs);exit;
     }
 
     function doEditBrandSeries()
     {
+        if(!empty($_POST['brandser_detail']))
+        {
+            $_POST['brandser_detail'] = htmlentities($_POST['brandser_detail']);
+        }
+        $_POST['brandser_add_date']=time();
         $rs = $this->brandSeriesLogic->update($_POST);
         echo json_encode($rs);exit;
     }

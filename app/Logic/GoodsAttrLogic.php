@@ -63,16 +63,18 @@ class GoodsAttrLogic
             $p = $param['p'];
         }
         unset($param['p']);
-        $where = ' WHERE 1=1 ';
-        $changeResult = $this->goodsAttrModel->getWhereAndParamForPage($param);
+        $where = ' WHERE 1=1 and goodsattr.is_del=1 ';
+        $changeResult = $this->goodsAttrModel->getWhereAndParamForPage($param,true);
         if($changeResult['status']==2)
         {
             return $changeResult;
         }
         $where.= $changeResult['result']['where'];
         $data = $changeResult['result']['param'];
-        $where.=" ORDER BY id desc";
-        $rs = $this->goodsAttrModel->page($p, 0, '', $where,$data , $field = '*');
+        $where.=" ORDER BY goodsattr.id desc";
+        $sql = "select goodsattr.id,goodsattr.goodsattr_name,goodsattr.goodsattr_value,goodscategory.goodscate_name as goods_category_id,goodsattr.goodsattr_add_date,admin.name as goodsattr_admin_id,goodsattr.is_del  ".
+            " from goods_attr as goodsattr LEFT JOIN admin ON admin.id=goodsattr.goodsattr_admin_id LEFT JOIN goods_category as goodscategory on goodscategory.id=goodsattr.goods_category_id".$where;
+        $rs = $this->goodsAttrModel->page($p, 0, $sql, '',$data , $field = '*');
         return $rs;
     }
 

@@ -148,4 +148,17 @@ class BrandCategoryLogic
         $rs = $this->brandCategoryModel->selectOne($sql,$where,$param,$fields);
         return $rs;
     }
+
+    /**根据品牌ID查询分类
+     * @param $id
+     * @param string $fields
+     * @return array
+     */
+    function getByBrandId( $id,$fields = '*')
+    {
+        if(empty($id)){return PubFunc::returnArray(2,false,'缺少参数');}
+        $rs = $this->getAll('',"WHERE is_del=1 AND brand_id=:id",array('id'=>$id));
+        return $rs;
+    }
+
 }

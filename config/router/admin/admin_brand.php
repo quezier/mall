@@ -55,5 +55,30 @@ return array(
         'parent_privilege_name'=>'跳转到添加商品品牌页面',
         'privilege_type'=>4,
         'call' => 'Admin/Brand/doGetBandByCateID'
+    ),
+
+    'admin_getparentidbrand'=>array(
+        'method' => 'GET',
+        'rank_num'=>3,
+        'privilege_name'=>'查询父级商品所属分类列表',
+        'parent_privilege_name'=>'商品品牌管理',
+        'privilege_type'=>4,
+        'call' => 'Admin/Brand/getByParentId'
+    ),
+    'admin_getbrandbycatelist'=>array(
+        'method' => 'GET',
+        'rank_num'=>3,
+        'privilege_name'=>'查询父级商品下属分类列表',
+        'parent_privilege_name'=>'商品品牌管理',
+        'privilege_type'=>4,
+        'call' => 'Admin/Brand/getBrandByCateId'
+    ),
+    'admin_brandlogodoupload'=>array(
+        'method' => 'POST',
+        'rank_num'=>4,
+        'privilege_name'=>'上传商品主图动作',
+        'parent_privilege_name'=>'跳转到编辑商品品牌页面',
+        'privilege_type'=>2,
+        'call' => 'Admin/Brand/doBrandThumbUpload'
     )
 );

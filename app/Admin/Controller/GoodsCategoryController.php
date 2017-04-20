@@ -19,7 +19,7 @@ class GoodsCategoryController extends BaseController
     }
 
     function toGoodsCategoryList(){
-        $needFieldsResult = $this->goodsCategoryLogic->getNeedFields(array('id'));
+        $needFieldsResult = $this->goodsCategoryLogic->getNeedFields(array('id','goodscate_name','goodscate_pinyin','goodscate_en','goodscate_parent_id','goodscate_add_date','is_del'));
 
         if($needFieldsResult['status']==1)
         {
@@ -50,14 +50,20 @@ class GoodsCategoryController extends BaseController
     }
 
     function toAddGoodsCategory(){
-        $needFieldsResult = $this->goodsCategoryLogic->getNeedFields(array('id'));
+        $needFieldsResult = $this->goodsCategoryLogic->getNeedFields(array('goodscate_parent_id','goodscate_name','goodscate_pinyin','goodscate_en','goodscate_sort_order'));
         if($needFieldsResult['status']==2)
         {
             return $needFieldsResult;
         }
+        $parentIDList=$this->goodsCategoryLogic->getAll();
+        $goodscateList=PubFunc::getSelectData($parentIDList['result'],'goodscate_name');
         $needFields = $needFieldsResult['result'];
         $addFields = array(
-            'id'=>array('cn_name'=>$needFields['id'],'type'=>'text')
+            'goodscate_parent_id'=>array('cn_name'=>$needFields['goodscate_parent_id'],'type'=>'select','list'=>$goodscateList),
+            'goodscate_name'=>array('cn_name'=>$needFields['goodscate_name'],'type'=>'text'),
+            'goodscate_pinyin'=>array('cn_name'=>$needFields['goodscate_pinyin'],'type'=>'text'),
+            'goodscate_en'=>array('cn_name'=>$needFields['goodscate_en'],'type'=>'text'),
+            'goodscate_sort_order'=>array('cn_name'=>$needFields['goodscate_sort_order'],'type'=>'text'),
         );
 
         $this->setVariable('tableCName','商品分类');
@@ -74,14 +80,20 @@ class GoodsCategoryController extends BaseController
             $this->setVariable('tableObject',$rs['result']);
         }
         $isDel = PubFunc::ddConfig('is_del');
-
-        $needFieldsResult = $this->goodsCategoryLogic->getNeedFields(array('is_del'));
+        $parentIDList=$this->goodsCategoryLogic->getAll();
+        $goodscateList=PubFunc::getSelectData($parentIDList['result'],'goodscate_name');
+        $needFieldsResult = $this->goodsCategoryLogic->getNeedFields(array('goodscate_parent_id','goodscate_name','goodscate_pinyin','goodscate_en','goodscate_sort_order','is_del'));
         if($needFieldsResult['status']==2)
         {
             return $needFieldsResult;
         }
         $needFields = $needFieldsResult['result'];
         $editFields = array(
+            'goodscate_parent_id'=>array('cn_name'=>$needFields['goodscate_parent_id'],'type'=>'select','list'=>$goodscateList),
+            'goodscate_name'=>array('cn_name'=>$needFields['goodscate_name'],'type'=>'text'),
+            'goodscate_pinyin'=>array('cn_name'=>$needFields['goodscate_pinyin'],'type'=>'text'),
+            'goodscate_en'=>array('cn_name'=>$needFields['goodscate_en'],'type'=>'text'),
+            'goodscate_sort_order'=>array('cn_name'=>$needFields['goodscate_sort_order'],'type'=>'text'),
             'is_del'=>array('cn_name'=>$needFields['is_del'],'type'=>'radio','list'=>$isDel),
         );
         $this->setVariable('tableCName','商品分类');
@@ -98,12 +110,14 @@ class GoodsCategoryController extends BaseController
 
     function doAddGoodsCategory()
     {
+        $_POST['goodscate_add_date']=time();
         $rs = $this->goodsCategoryLogic->insertFromTestData($_POST);
         echo json_encode($rs);exit;
     }
 
     function doEditGoodsCategory()
     {
+        $_POST['goodscate_add_date']=time();
         $rs = $this->goodsCategoryLogic->update($_POST);
         echo json_encode($rs);exit;
     }
