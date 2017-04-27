@@ -2,7 +2,7 @@
 define('IS_DEBUG',true);
 define('IS_REQUEST_FILTER',true);//是否开启对post,get等请求数据的关键字过滤
 define('NOW_TIME',time());
-define('SITE_NAME','MALL');
+define('SITE_NAME','世易红包系统');
 define('REQUEST_METHOD', $_SERVER['REQUEST_METHOD']);
 define('START_TIME', microtime(true));
 define('START_MEMORY_USAGE', memory_get_usage());
@@ -23,10 +23,13 @@ define('SESSION_WITH_SUBDOMAIN',false);
 if(SESSION_WITH_SUBDOMAIN)
 {
     ini_set('session.cookie_path', '/');
-    ini_set('session.cookie_domain', '');
+    ini_set('session.cookie_domain', '.hb.test');
     ini_set('session.cookie_lifetime', '0');
 }
-
-
+if(IS_SESSION_REDIS)
+{
+    ini_set('session.save_handler','redis');
+    ini_set('session.save_path','tcp://127.0.0.1:6379');
+}
 require "../vendor/autoload.php";
 require "../boot.php";
